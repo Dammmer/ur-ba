@@ -5,7 +5,7 @@ import { ILesson } from './Lesson';
 // COURSE - ЭТО КУРС, А НЕ УРОК
 export interface ICourse extends Document {
   name: string;
-  image: string;
+  image?: string;
   level: string;
   duration: number;
   content: string;
@@ -18,7 +18,7 @@ export interface ICourse extends Document {
 // Схема MongoDB - Исправлена, чтобы совпадала с интерфейсом
 const CourseSchema: Schema = new Schema({
   name: { type: String, required: true },
-  image: { type: String, required: true },
+  image: { type: String, required: false, default: 'https://example.com/default-course.jpg' },
   level: { type: String, required: true },
   duration: { type: Number, required: true },
   content: { type: String, required: true },

@@ -42,10 +42,17 @@ app.get('/', (req, res) => {
 mongoose.connect(process.env.MONGO_URI || '', {
   dbName: 'uyghur_connect',
 }).then(() => {
-  console.log('MongoDB connected');
+  console.log('MongoDB connected successfully');
   app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
 }).catch((err) => {
-  console.error('MongoDB connection error:', err);
+  console.error('MongoDB connection error:', err.message);
+  if (err.message.includes('TLS')) {
+    console.error('TLS/SSL connection error. Please check:');
+    console.error('1. MongoDB Atlas credentials are correct');
+    console.error('2. Network allows connection to MongoDB Atlas');
+    console.error('3. MongoDB Atlas cluster is running');
+  }
+  process.exit(1);
 });
