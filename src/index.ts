@@ -9,15 +9,24 @@ import userRoutes from './routes/user';
 import eventRoutes from './routes/event';
 import postRoutes from './routes/post';
 import lessonRoutes from './routes/lesson';
+import { getJwtSecret } from './utils/jwt';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+getJwtSecret();
+const defaultCorsOrigins = ['http://localhost:5173', 'http://localhost:3000', 'https://ur-front.vercel.app'];
 
 app.use(cors({
-  origin: '*',
-  credentials: true
+  origin: (origin, callback) => {
+    const allowedOrigins = (process.env.CORS_ORIGINS || defaultCorsOrigins.join(',')).split(',').map((item) => item.trim()).filter(Boolean);
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
 // Global rate limiter

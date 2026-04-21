@@ -8,6 +8,14 @@ import { authenticate } from '../middlewares/authenticate';
 
 const router = Router();
 
+function pickPostFields(body: any) {
+  const result: Record<string, unknown> = {};
+  for (const field of ['title', 'content']) {
+    if (body[field] !== undefined) result[field] = body[field];
+  }
+  return result;
+}
+
 // GET /api/posts?category=question
 router.get('/', async (req, res) => {
   try {
@@ -60,7 +68,7 @@ router.patch('/:id', authorizeRole(['teacher', 'admin', 'student']), async (req:
     if (post.author.toString() !== req.user.id && !['teacher', 'admin'].includes(req.user.role)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    post.set(req.body);
+    post.set(pickPostFields(req.body));
     await post.save();
     res.json(post);
   } catch (err) {
